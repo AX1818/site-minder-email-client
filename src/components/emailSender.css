@@ -1,0 +1,47 @@
+div.row {
+  display: flex;
+  flex-wrap: nowrap;
+  margin: 10px auto;
+  width: 800px;
+  justify-content: center
+}
+
+div.row label {
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+label>span {
+  display: inline-block;
+  margin: auto 5px;
+  width: 60px;
+  flex-grow: 0;
+}
+
+.email-addresses-input {
+  display: flex;
+  flex: 0 1 auto;
+  flex-wrap: "wrap";
+  min-height: 40px;
+  border-bottom: 1px solid lightgrey;
+  background-color: linen;
+}
+
+form section div .email-addresses-input {
+  min-width: 600px;
+  margin: 5px 5px;
+}
+
+form div.email-subject {
+  margin: 5px 5px;
+  min-width: 590px;
+}
+
+.email-body {
+  width: 800px;
+  min-width: 600px;
+}
+
+.email-subject {
+  background-color: linen;
+}

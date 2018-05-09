@@ -1,95 +1,91 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+
+import isEmail from 'validator/lib/isEmail';
 import Chip from 'material-ui/Chip';
 
-import TextField from 'material-ui/TextField';
-import {orange500, blue500} from 'material-ui/styles/colors';
-import "./emailAddressesInput.css";
-
-import AutoCompleteExampleDataSource from './autoCompleteEmailInput';
-
-const styles = {
-  chip: {
-    margin: 4,
-  },
-  wrapper: {
-    display: 'flex',
-    flexWrap: 'wrap',
-  },
-};
-
-const errorStyles = {
-  errorStyle: {
-    color: orange500,
-  },
-  underlineStyle: {
-    borderColor: orange500,
-  },
-  floatingLabelStyle: {
-    color: orange500,
-  },
-  floatingLabelFocusStyle: {
-    color: blue500,
-  },
-};
+import AutoCompleteEmailAddressInput from './autoCompleteEmailInput';
 
 export default class EmailAddressesInput extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      addNew: false
-    }
+    this.state = { addNew: false };
+
+    this.styles = {
+      chip: { margin: 4 },
+      wrapper: { display: 'flex', flexWrap: 'wrap' },
+    };
 
     this.handleClick = this.handleClick.bind(this);
     this.finalizeAddresses = this.finalizeAddresses.bind(this);
-    this.onKeyDown = this.onKeyDown.bind(this);
+    this.onNewEmailAddress = this.onNewEmailAddress.bind(this);
+  }
+
+  onNewEmailAddress(newEmail) {
+    const newEmailAddress = newEmail;
+    this.props.handleAddressAdd(newEmailAddress);
+    this.setState({...this.state, addNew: false});
   }
 
   handleClick(event) {
+    event.preventDefault();
+
     if (this.state.addNew) {
       return;
     }
   
-    this.setState({addNew: true});
+    this.setState({...this.state, addNew: true});
   }
 
-  onKeyDown(event) {
-    let keyPressed = event.which;
-
-    if (keyPressed === 13) {
-      const newEmailAddress = event.target.value;
-      console.info('nwq email: ', event.target.value);
-      this.props.handleAddressAdd(newEmailAddress);
-      this.setState({addNew: false});
+  finalizeAddresses() {
+    if (!this.state.addNew) {
+      return;
     }
-  }
-
-  finalizeAddresses(event) {
-    this.setState({addNew: false});
+    this.setState({...this.state, addNew: false});
   }
 
   render() {
-    console.log('this.state.addNew: ', this.state.addNew);
-
-    let addEmailComponent = this.state.addNew ? <TextField  hintText="Type new email address"  hintStyle={errorStyles.errorStyle}
-      onBlur={this.finalizeAddresses}
-      onKeyDown={this.onKeyDown}/> : null;
-    console.log('addEmailComponent: ', addEmailComponent); 
+    const addEmailComponent = this.state.addNew ? <AutoCompleteEmailAddressInput onClose={this.finalizeAddresses} onNewEmailAddress={this.onNewEmailAddress} /> : null;
 
     return (
-      <div className="email-addresses-input" onClick={this.handleClick}>
+      <div role="searchbox" style={this.styles.wrapper} className="email-addresses-input" tabIndex={this.props.tabIndex || 0}
+        onClick={this.handleClick}
+        onKeyDown={ (event) => event.keyCode === 13 && this.handleClick(event) }>
         {
-          this.props.emailAddresses.map(emailAddress => 
-            <Chip style={styles.chip} key={emailAddress.address}  onRequestDelete={() => this.props.handleAddressDelete(emailAddress.address)}>
-              {emailAddress.address}
-            </Chip>
-          )
+          this.props.emailAddresses.map((emailAddress) => {
+            let invalidEmailChipStyle = {};
+            if (!isEmail(emailAddress)) {
+              invalidEmailChipStyle = {
+                style: { margin: 4, borderWidth: 1, borderStyle: 'dashed', borderColor: 'red' },
+                labelStyle: {color: 'red', textDecoration: 'underline'}
+              };
+            } 
+            return (
+              <Chip style={this.styles.chip} {...invalidEmailChipStyle}
+                key={emailAddress}
+                onRequestDelete={ () => this.props.handleAddressDelete(emailAddress) }
+              >
+                {emailAddress}
+              </Chip>
+            );
+          })
         }
-       
-       { addEmailComponent }
 
-       <AutoCompleteExampleDataSource/>
+       { addEmailComponent }
       </div>
     );
   }
 }
+
+EmailAddressesInput.defaultProps = {
+  tabIndex: 0,
+  emailAddresses: [],
+};
+
+EmailAddressesInput.propTypes = {
+  tabIndex: PropTypes.number,
+  emailAddresses: PropTypes.PropTypes.arrayOf(PropTypes.string),
+  handleAddressAdd: PropTypes.func.isRequired,
+  handleAddressDelete: PropTypes.func.isRequired
+};
