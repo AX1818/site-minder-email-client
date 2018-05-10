@@ -55,7 +55,7 @@ site-minder-email-client/
   | |____setupTests.js
 ```
 
-My codes are mainly under both ***`src/components`*** and ***`src/services`*** folders. In addition, the generated ***`app.js`*** was changed to inject ***`EmailSender`*** component. All the others are genereated by ``
+My codes are mainly under both ***`src/components`*** and ***`src/services`*** folders. In addition, the generated ***`app.js`*** was changed to inject ***`EmailSender`*** component. All the others are genereated by [Create React App](https://github.com/facebookincubator/create-react-app).
 
 - *`src/components`* - hosts email related components
 
@@ -78,12 +78,12 @@ site-minder-email-client/
 site-minder-email-client/
   |____src
   | |____services
-  | | |____emailConfig.js
-  | | |____emailService.js
+  | | |____emailConfig.js // config for the mail server
+  | | |____emailService.js // service talking to the mail server. currently it has only one put request for sending email.
 ```
 
 ## Setup Env
-To set up the project, you will need to have `node.js` installed locally. What's more, you also needs to check out the mock mail server back-end.
+To set up the project, you will need to have `node.js` installed locally. What's more, you also need to check out the mock mail server back-end.
 - Check out this project
 ```
 git clone https://github.com/AX1818/site-minder-email-client.git
@@ -112,12 +112,11 @@ Runs the app.
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
 The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+You will also see any errors in the console.
 
 ### `npm test`
 
 Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](#running-tests) for more information.
 
 ### `npm run build`
 
@@ -143,7 +142,7 @@ Cliking `SEND` button will do two operations:
 - Check if there is no email address input or any invalid address. If so, stop sending emaila and show an error message on the page.
 - Send the eamil as a PUT request to the mail server and show the result on the page.
 
-> Note: the current code does not chck the blank `subject` or `email text` which is easy to do though. This check and related user interactions must be done in a real product.
+> Note: the current code does not check the blank `subject` or `email text` which is easy to do though. This check and related user interactions must be done in a real product.
 
 Clicking `NEW` button will clean up the form to be ready for a new email.
 
@@ -155,7 +154,9 @@ Due to the time limit, there are a number of work to be done.
 
 - `Authentication` function - to authenticate users and use security token for sending emails
 - Use `HTTPS` for the communicaiton between the client and server
-- More friendly interaction such as message dialogs.
-- Support `contact list` function - After authentiation, a contact list can be fetched for the current user. Thus, when they input email adderss, an auto-complete function can be providd. The current solution is using a mock contact list.
-- A commercial mailbox supprots more functions, such as junk emails, history emails etc.
-- More tests include integratin tests
+- More user-friendly UI design & interaction, such as message dialogs, stricter checkingo.
+- More powerful error handling, such as showing meaningful messae depending on the error types
+- Support `contact list` function - After authentiation, a contact list can be fetched for the current user. Thus, when they input email adderss, an auto-complete function can be provided. The current solution is using a mock contact list.
+- More commercial mailbox features, such as inbox, outbox, sent box, junk emails, history emails etc.
+- More tests include integration tests
+- Cloud Deployment ready
